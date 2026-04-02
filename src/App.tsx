@@ -31,6 +31,7 @@ export function App() {
   const [cards, setCards] = useState<CardInfo[]>([])
   const [result, setResult] = useState<CardInfo | null>(null)
   const [notFound, setNotFound] = useState(false)
+  const [scannedUid, setScannedUid] = useState<string | null>(null)
   const [scanning, setScanning] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -44,6 +45,7 @@ export function App() {
   const lookup = useCallback(
     (uid: string) => {
       const normalized = uid.replace(/:/g, "").toUpperCase()
+      setScannedUid(normalized)
       const card = cards.find((c) => c.uid === normalized)
       if (card) {
         setResult(card)
@@ -94,6 +96,7 @@ export function App() {
     setResult(null)
     setNotFound(false)
     setError(null)
+    setScannedUid(null)
   }
 
   return (
@@ -161,9 +164,17 @@ export function App() {
             )}
 
             {notFound && (
-              <div className="text-sm text-destructive">
-                Card not found in database.
-              </div>
+              <>
+                {scannedUid && (
+                  <>
+                    <div className="text-xs text-muted-foreground">UID</div>
+                    <div className="mt-1 font-mono text-sm">{scannedUid}</div>
+                  </>
+                )}
+                <div className="mt-4 text-sm text-destructive">
+                  Card not found in database.
+                </div>
+              </>
             )}
 
             {error && (
