@@ -5,6 +5,7 @@ interface CardInfo {
   uid: string
   total: number
   expiry: string
+  used: number
   remaining: number
 }
 
@@ -13,12 +14,15 @@ function parseCSV(text: string): CardInfo[] {
     .trim()
     .split("\n")
     .map((line) => {
-      const [uid, total, expiry, remaining] = line.split(";")
+      const [uid, total, expiry, used] = line.split(";")
+      const t = parseInt(total)
+      const u = parseInt(used)
       return {
         uid: uid.trim().toUpperCase(),
-        total: parseInt(total),
+        total: t,
         expiry: expiry.trim(),
-        remaining: parseInt(remaining),
+        used: u,
+        remaining: t - u,
       }
     })
 }
@@ -109,13 +113,21 @@ export function App() {
             <div className="mt-1 font-mono text-sm">{result.uid}</div>
 
             <div className="mt-4 text-xs text-muted-foreground">
-              Remaining Points
+              Remaining
             </div>
             <div className="mt-1 font-mono text-5xl font-bold text-green-500">
               {result.remaining}
             </div>
-            <div className="mt-1 text-xs text-muted-foreground">
-              of {result.total} purchased
+
+            <div className="mt-4 flex justify-center gap-6 text-sm">
+              <div>
+                <div className="text-xs text-muted-foreground">Total</div>
+                <div className="font-mono font-medium">{result.total}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Used</div>
+                <div className="font-mono font-medium">{result.used}</div>
+              </div>
             </div>
 
             <div className="mt-4 text-xs text-muted-foreground">
