@@ -88,6 +88,14 @@ export function App() {
     ? new Date(result.expiry) < new Date()
     : false
 
+  const showModal = result || notFound || error
+
+  const closeModal = () => {
+    setResult(null)
+    setNotFound(false)
+    setError(null)
+  }
+
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
       <div className="flex w-full max-w-sm flex-col items-center gap-6 text-center">
@@ -106,54 +114,68 @@ export function App() {
         >
           {scanning ? "Waiting for card..." : "Start Scan"}
         </Button>
-
-        {result && (
-          <div className="w-full rounded-xl border bg-card p-5">
-            <div className="text-xs text-muted-foreground">UID</div>
-            <div className="mt-1 font-mono text-sm">{result.uid}</div>
-
-            <div className="mt-4 text-xs text-muted-foreground">
-              Remaining
-            </div>
-            <div className="mt-1 font-mono text-5xl font-bold text-green-500">
-              {result.remaining}
-            </div>
-
-            <div className="mt-4 flex justify-center gap-6 text-sm">
-              <div>
-                <div className="text-xs text-muted-foreground">Total</div>
-                <div className="font-mono font-medium">{result.total}</div>
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Used</div>
-                <div className="font-mono font-medium">{result.used}</div>
-              </div>
-            </div>
-
-            <div className="mt-4 text-xs text-muted-foreground">
-              Valid until
-            </div>
-            <div
-              className={`mt-1 text-sm font-medium ${expired ? "text-destructive" : ""}`}
-            >
-              {new Date(result.expiry).toLocaleDateString()}
-              {expired && " (expired)"}
-            </div>
-          </div>
-        )}
-
-        {notFound && (
-          <div className="w-full rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-            Card not found in database.
-          </div>
-        )}
-
-        {error && (
-          <div className="w-full rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-            {error}
-          </div>
-        )}
       </div>
+
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={closeModal}
+        >
+          <div
+            className="mx-4 w-full max-w-sm rounded-2xl border bg-background p-6 text-center shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {result && (
+              <>
+                <div className="text-xs text-muted-foreground">UID</div>
+                <div className="mt-1 font-mono text-sm">{result.uid}</div>
+
+                <div className="mt-4 text-xs text-muted-foreground">
+                  Remaining
+                </div>
+                <div className="mt-1 font-mono text-5xl font-bold text-green-500">
+                  {result.remaining}
+                </div>
+
+                <div className="mt-4 flex justify-center gap-6 text-sm">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Total</div>
+                    <div className="font-mono font-medium">{result.total}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Used</div>
+                    <div className="font-mono font-medium">{result.used}</div>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-xs text-muted-foreground">
+                  Valid until
+                </div>
+                <div
+                  className={`mt-1 text-sm font-medium ${expired ? "text-destructive" : ""}`}
+                >
+                  {new Date(result.expiry).toLocaleDateString()}
+                  {expired && " (expired)"}
+                </div>
+              </>
+            )}
+
+            {notFound && (
+              <div className="text-sm text-destructive">
+                Card not found in database.
+              </div>
+            )}
+
+            {error && (
+              <div className="text-sm text-destructive">{error}</div>
+            )}
+
+            <Button className="mt-6 w-full" onClick={closeModal}>
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
