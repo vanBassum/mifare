@@ -48,7 +48,7 @@ export function App() {
       const bytes = normalized.match(/.{1,2}/g) || []
       const reversed = bytes.length ? bytes.reverse().join("") : normalized
       setScannedUid(normalized)
-      const card = cards.find((c) => c.uid === normalized || c.uid === reversed)
+      const card = cards.find((c) => c.uid === reversed)
       if (card) {
         setResult(card)
         setNotFound(false)
